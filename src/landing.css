@@ -1,0 +1,3220 @@
+/* ===================================================================
+   /agent — Agent Summer landing
+   Styled comp. Wireframe structure, MDS-2026 application.
+   Five sections, five different compositional logics.
+   ====================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Britti Sans';
+  src: url('/assets/britti-sans-variable.woff2') format('woff2'),
+       url('/assets/britti-sans-variable.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* MDS-2026 dark mode background tokens (from design.md § Color) */
+  --bg:        #0A0A0D;
+  --bg-elev-1: #16161A;   /* bg/elevated → grey/925 */
+  --bg-elev-2: #16161A;   /* bg/elevated → grey/925 (single elevated value) */
+  --bg-deep:   #0F0F12;   /* bg/subtle → grey/950 */
+  --surface-1: rgba(255, 255, 255, 0.020);
+  --surface-2: rgba(255, 255, 255, 0.040);
+  --rule:      rgba(255, 255, 255, 0.06);
+  --rule-mid:  rgba(255, 255, 255, 0.10);
+  --rule-strong: rgba(255, 255, 255, 0.18);
+  --text-1:    #FBFAF9;
+  --text-2:    rgba(251, 250, 249, 0.72);
+  --text-3:    rgba(251, 250, 249, 0.50);
+  --text-4:    rgba(251, 250, 249, 0.32);
+  --purple:    #6E54FF;
+  --purple-soft: #836EF9;
+  --purple-300: #B8B4FE;
+  --live:      #4ade80;
+  --live-bg:   rgba(74, 222, 128, 0.10);
+  --mono:      'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+  --sans:      'Inter', -apple-system, system-ui, sans-serif;
+  --display:   'Britti Sans', 'Inter', sans-serif;
+
+  /* MDS-2026 type scale (from /T-Typography in the figma file).
+     Sizes in px; line-heights from the spec. Letter-spacing in em. */
+  --t-display-size: 64px;   --t-display-lh: 72px;   --t-display-track: -0.02em;
+  --t-h1-size: 48px;        --t-h1-lh: 56px;        --t-h1-track: -0.015em;
+  --t-h2-size: 36px;        --t-h2-lh: 44px;        --t-h2-track: -0.01em;
+  --t-h3-size: 30px;        --t-h3-lh: 38px;        --t-h3-track: -0.005em;
+  --t-h4-size: 24px;        --t-h4-lh: 32px;        --t-h4-track: -0.0025em;
+  --t-h5-size: 20px;        --t-h5-lh: 28px;        --t-h5-track: 0;
+
+  --t-body-large: 18px;     --t-body-large-lh: 28px;
+  --t-body-base:  16px;     --t-body-base-lh: 24px;
+  --t-body-small: 14px;     --t-body-small-lh: 20px;
+  --t-body-xs:    12px;     --t-body-xs-lh: 16px;
+
+  --t-mono-base:  14px;     --t-mono-base-lh: 20px;
+  --t-mono-small: 12px;     --t-mono-small-lh: 16px;
+  --t-mono-track: 0.08em;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+section, .foot {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+/* MonApp nav header: 16px viewport-inset via margin so the dashed bottom
+   border sits aligned with the section frames' left/right edges below. */
+.nav-placeholder-wrap {
+  padding: 0 16px;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* Width frames — outer wrapper at 16px, content max 1312px, inner pad 48px */
+.frame {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+.frame-narrow {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* MDS-2026 SectionFrame — canonical spec.
+   Continuous 1px borders on L/R/B + 4×4 filled corner-squares at -2px from
+   each corner. Top border suppressed on every frame so adjacent frames stack
+   flush, sharing a single boundary line (the previous frame's bottom border).
+   First frame's top edge meets the nav-placeholder above. Last frame's bottom
+   border is suppressed so the footer's top edge serves as that boundary.
+   Internal padding lives inside the frame, not on the section. */
+.section-frame {
+  position: relative;
+  border-top: 0;
+  border-left: 1px solid var(--rule-mid);
+  border-right: 1px solid var(--rule-mid);
+  border-bottom: 1px solid var(--rule-mid);
+  padding: 96px 48px;
+}
+.section-frame--last { border-bottom: 0; }
+.section-frame__sq {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--rule-strong);
+  z-index: 2;
+  pointer-events: none;
+}
+.section-frame__sq--tl { top: -2px;    left: -2px; }
+.section-frame__sq--tr { top: -2px;    right: -2px; }
+.section-frame__sq--bl { bottom: -2px; left: -2px; }
+.section-frame__sq--br { bottom: -2px; right: -2px; }
+
+/* ===================================================================
+   Shared section header — used across Campaigns, Announcements,
+   Discovery, and API hub for one consistent pattern.
+   ====================================================================== */
+.sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.sec-head__left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.sec-head__eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--purple-soft);
+  margin: 0;
+}
+.sec-head__title {
+  font-family: var(--sans);
+  font-size: 36px;
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+  margin: 0;
+  text-wrap: pretty;
+}
+.sec-head__desc {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  font-weight: 400;
+  color: var(--text-2);
+  margin: 0;
+  max-width: 640px;
+}
+.sec-head__meta {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  text-align: right;
+  white-space: nowrap;
+  padding-bottom: 4px;
+}
+.sec-head__meta strong { color: var(--text-1); font-weight: 500; margin-right: 6px; }
+.sec-head__meta .sep { color: var(--text-4); margin: 0 22px; }
+
+/* API hub specifically aligns its metadata to the top (parallel to headline),
+   not the bottom — because its supporting text is much longer than the
+   other sections. */
+.api .sec-head {
+  align-items: flex-start;
+}
+.api .sec-head__meta {
+  padding-top: 4px;
+  padding-bottom: 0;
+}
+.sec-head__meta-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  animation: status-pulse 1.8s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@media (max-width: 640px) {
+  .sec-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .sec-head__title {
+    font-size: var(--t-h3-size);
+    line-height: var(--t-h3-lh);
+    letter-spacing: var(--t-h3-track);
+  }
+  .sec-head__desc {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+  }
+  .sec-head__meta {
+    text-align: left;
+    padding-bottom: 0;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+}
+
+/* ---------- MonApp nav placeholder ---------- */
+
+.nav-placeholder {
+  height: 56px;
+  margin: 0 16px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+/* MonApp footer placeholder — inherited chrome */
+.foot-placeholder {
+  height: 56px;
+  margin: 0 16px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+/* MonApp footer placeholder — inherited chrome */
+/* ===================================================================
+   Modal component — MDS-2026 canonical spec with corner brackets
+   ====================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  animation: modal-backdrop-in .25s ease-out;
+}
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.modal {
+  position: relative;
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule-mid);
+  border-radius: 0;
+  padding: 0;
+  animation: modal-in .25s ease-out;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* Four 16×16 corner brackets at each corner of the modal */
+.modal__corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+.modal__corner--tl { top: -1px; left: -1px;   border-top:    1px solid var(--text-1); border-left:  1px solid var(--text-1); }
+.modal__corner--tr { top: -1px; right: -1px;  border-top:    1px solid var(--text-1); border-right: 1px solid var(--text-1); }
+.modal__corner--bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--text-1); border-left:  1px solid var(--text-1); }
+.modal__corner--br { bottom: -1px; right: -1px;border-bottom: 1px solid var(--text-1); border-right: 1px solid var(--text-1); }
+
+.modal__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  z-index: 2;
+  transition: color .12s;
+}
+.modal__close:hover { color: var(--text-1); }
+
+.modal__body {
+  padding: 36px 36px 28px;
+  display: flex;
+  flex-direction: column;
+}
+.modal__indicator {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--live);
+  font-size: 22px;
+  line-height: 1;
+  margin-bottom: 24px;
+}
+.modal__indicator .ph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  line-height: 1;
+}
+.modal__indicator .ph::before {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+.modal__title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 0 0 12px;
+}
+.modal__message {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 28px;
+}
+.modal__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.modal__primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(110,84,255,0) 0%, rgba(255,255,255,0.14) 100%),
+    var(--purple);
+  color: var(--text-1);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0.5px 0 rgba(0,0,0,0.25);
+}
+.modal__primary:hover { filter: brightness(1.08); }
+.modal__primary .ph { font-size: 14px; line-height: 1; }
+.modal__skip {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: transparent;
+  border: 0;
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: color .12s;
+}
+.modal__skip:hover { color: var(--text-1); }
+.modal__footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.modal__footer-link {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color .12s;
+}
+.modal__footer-link:hover { color: var(--text-1); }
+
+/* ===================================================================
+   Toast component — MDS-2026 spec, dark mode, fixed bottom-right
+   Two states stacked for design reference:
+   1. Default (post-Clawdi return) — info with CTA
+   2. Success (post-X auth) — confirmation with auto-dismiss
+   ====================================================================== */
+.toast-stack {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+.toast {
+  position: relative;
+  width: 360px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule-mid);
+  border-radius: 4px;
+  padding: 16px 40px 16px 16px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: toast-enter .25s ease-out;
+}
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.toast__indicator {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+}
+.toast__indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--purple-soft);
+  box-shadow: 0 0 6px var(--purple-soft);
+}
+.toast__body { flex: 1; min-width: 0; }
+.toast__title {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-1);
+  margin: 0 0 6px;
+}
+.toast__message {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+  margin: 0;
+}
+.toast__cta {
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-size: var(--t-mono-small);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(110,84,255,0) 0%, rgba(255,255,255,0.14) 100%),
+    var(--purple);
+  color: var(--text-1);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0.5px 0 rgba(0,0,0,0.25);
+  white-space: nowrap;
+}
+.toast__cta:hover { filter: brightness(1.08); }
+.toast__cta .ph { font-size: 13px; line-height: 1; }
+.toast__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: color .12s;
+}
+.toast__close:hover { color: var(--text-1); }
+
+/* Success state — post-X-auth confirmation */
+.toast--success {
+  background: linear-gradient(rgba(74, 222, 128, 0.04), rgba(74, 222, 128, 0.04)), var(--bg-elev-1);
+  border-color: rgba(74, 222, 128, 0.25);
+}
+.toast--success .toast__indicator {
+  color: var(--live);
+  font-size: 20px;
+}
+.toast--success .toast__message {
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--text-1);
+}
+
+/* ---------- Shared CTA primitives ---------- */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-radius: 6px;
+  border: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: filter .15s, border-color .15s, transform .12s;
+  cursor: pointer;
+}
+.cta--primary {
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(110,84,255,0) 0%, rgba(255,255,255,0.14) 100%),
+    var(--purple);
+  color: var(--text-1);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0.5px 0 rgba(0,0,0,0.25),
+    0 8px 24px -6px rgba(110, 84, 255, 0.35);
+}
+.cta--primary:hover { filter: brightness(1.08); }
+.cta--primary:active { transform: scale(0.98); }
+.cta--ghost {
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--rule-strong);
+}
+.cta--ghost:hover { border-color: rgba(255,255,255,0.40); }
+
+/* Inline Phosphor icons in buttons and link-CTAs */
+.cta .ph,
+.camp__cta-primary .ph,
+.camp__cta-ghost .ph {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.anno__more .ph,
+.camp__soon-meta .ph,
+.disc__foot .ph,
+.foot__links a .ph {
+  font-size: 1em;
+  vertical-align: -0.1em;
+  margin-left: 2px;
+}
+
+/* Arrow micro-interaction — arrow slides in its direction on parent hover */
+.cta .ph,
+.camp__cta-primary .ph,
+.camp__cta-ghost .ph,
+.anno__more .ph,
+.camp__soon-meta .ph,
+.disc__foot .ph,
+.foot__links a .ph {
+  display: inline-block;
+  transition: transform .15s cubic-bezier(.23, 1, .32, 1);
+}
+.cta:hover .ph-arrow-up-right,
+.camp__cta-primary:hover .ph-arrow-up-right,
+.camp__cta-ghost:hover .ph-arrow-up-right,
+.anno__row:hover .ph-arrow-up-right,
+.camp__soon-meta:hover .ph-arrow-up-right,
+.foot__links a:hover .ph-arrow-up-right {
+  transform: translate(2px, -2px);
+}
+.disc__foot:hover .ph-arrow-down {
+  transform: translateY(2px);
+}
+
+/* Make non-button link-CTAs feel interactive */
+.anno__more,
+.camp__soon-meta,
+.disc__foot,
+.foot__links a {
+  cursor: pointer;
+}
+
+/* ===================================================================
+   S01 · HERO — asymmetric two-path
+   ====================================================================== */
+
+.hero {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Ambient dot grid backdrop — sits behind all hero content */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(251, 250, 249, 0.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+  background-position: 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero > .section-frame {
+  padding-top: 40px;
+}
+.hero > .frame { position: relative; z-index: 1; }
+.hero__topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 0;
+  white-space: nowrap;
+  gap: 24px;
+}
+.hero__topbar-season { color: var(--purple-soft); }
+.hero__topbar-dates  { text-align: right; }
+
+/* MDS-2026 Status Badge — corner brackets + label + optional pulsing dot.
+   Default tone here is success (Live). */
+.status-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--live-bg);
+  border: 1px solid rgba(74, 222, 128, 0.30);
+  color: var(--live);
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.status-badge__corner {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+}
+.status-badge__corner--tl { top: -1px;    left: -1px;  border-top: 1px solid var(--live); border-left:  1px solid var(--live); }
+.status-badge__corner--tr { top: -1px;    right: -1px; border-top: 1px solid var(--live); border-right: 1px solid var(--live); }
+.status-badge__corner--bl { bottom: -1px; left: -1px;  border-bottom: 1px solid var(--live); border-left:  1px solid var(--live); }
+.status-badge__corner--br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--live); border-right: 1px solid var(--live); }
+.status-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
+  animation: status-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.hero__headline {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-display-size);
+  line-height: var(--t-display-lh);
+  letter-spacing: var(--t-display-track);
+  color: var(--text-1);
+  margin: 0;
+  max-width: 1100px;
+}
+
+/* Two-column row: headline (left, fills) + eyebrow (right, aligned to last
+   baseline of the headline). */
+.hero__head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  margin: 24px 0 24px;
+  flex-wrap: wrap;
+}
+.hero__head-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+  text-align: right;
+  padding-top: 18px;
+  flex-shrink: 0;
+}
+.hero__head-eyebrow strong { color: var(--text-1); font-weight: 500; }
+.hero__tag {
+  font-family: var(--sans);
+  font-size: var(--t-body-large);
+  line-height: var(--t-body-large-lh);
+  color: var(--text-2);
+  margin: 0 0 40px;
+  max-width: 720px;
+}
+
+/* Two paths — asymmetric: A is wider and instruction-led, B is narrower destination */
+.hero__paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* Path-card icon — Phosphor mark in a framed container at the top of each card. */
+.path-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--rule-mid);
+  border-radius: 4px;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--text-1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.0) 60%),
+    rgba(255, 255, 255, 0.025);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.30);
+  margin-bottom: 22px;
+  flex-shrink: 0;
+  transition: border-color .18s, color .18s, background .18s;
+}
+.path-a:hover .path-card__icon,
+.path-b:hover .path-card__icon {
+  border-color: var(--rule-strong);
+}
+
+/* Inline SVG path-card icons: sized to fit inside the 56px frame */
+.path-icon {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+/* Path A — terminal cursor blinks ambiently at rest. */
+.path-icon__cursor {
+  animation: path-icon-cursor-blink 1400ms ease-in-out infinite;
+}
+@keyframes path-icon-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+/* Path B — LED pulse inside the CPU chip body, hover-only. */
+.path-b .path-card__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.path-b:hover .path-card__icon::after {
+  animation: path-icon-led-pulse 1400ms ease-in-out infinite;
+}
+@keyframes path-icon-led-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+/* Path B — cloud arrow rises and fades on card hover. Pauses at rest. */
+.path-icon__arrow {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.path-b:hover .path-icon__arrow {
+  animation: path-icon-arrow-up 800ms ease-in-out infinite;
+}
+@keyframes path-icon-arrow-up {
+  0%   { transform: translateY(0);    opacity: 1; }
+  50%  { transform: translateY(-6px); opacity: 0; }
+  51%  { transform: translateY(0);    opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .path-icon__cursor,
+  .path-b .path-card__icon::after,
+  .path-b:hover .path-icon__arrow {
+    animation: none;
+  }
+}
+
+/* Path B channels — icon + label chips that sit in the middle of the card. */
+.path-b__channels-icons {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 0;
+  flex-wrap: wrap;
+}
+.path-b__channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--rule-mid);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  transition: border-color .18s, background .18s, color .18s;
+}
+.path-b__channel:hover {
+  border-color: var(--rule-strong);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-1);
+}
+.path-b__channel-icon {
+  font-size: 16px;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+/* Path A — instruction surface: dense, command block is the anchor */
+.path-a {
+  position: relative;
+  background: #1B1B20;
+  border: 1px solid var(--rule-mid);
+  border-radius: 0;
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .18s;
+}
+.path-a:hover { border-color: var(--rule-strong); }
+
+/* Path B — destination: mirrors Path A's padding and rhythm */
+.path-b {
+  position: relative;
+  background: #1B1B20;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .18s;
+}
+.path-b:hover { border-color: var(--rule-strong); }
+
+/* Corner-bracket hover affordance — 4 corner spans per card.
+   MDS-2026 spec: L-shaped 1px stroke, 16px arms. */
+.card-bracket {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(0, 0);
+  transition: opacity .18s ease-out, transform .18s ease-out;
+}
+.card-bracket--tl { top: -1px;    left: -1px;    border-top: 1px solid var(--text-1); border-left:  1px solid var(--text-1); transform: translate(3px, 3px); }
+.card-bracket--tr { top: -1px;    right: -1px;   border-top: 1px solid var(--text-1); border-right: 1px solid var(--text-1); transform: translate(-3px, 3px); }
+.card-bracket--bl { bottom: -1px; left: -1px;    border-bottom: 1px solid var(--text-1); border-left:  1px solid var(--text-1); transform: translate(3px, -3px); }
+.card-bracket--br { bottom: -1px; right: -1px;   border-bottom: 1px solid var(--text-1); border-right: 1px solid var(--text-1); transform: translate(-3px, -3px); }
+.path-a:hover .card-bracket,
+.path-b:hover .card-bracket,
+.camp__live:hover .card-bracket,
+.camp__soon:hover .card-bracket {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+.path-a__eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+.path-a__eyebrow .path-card__tag,
+.path-b__eyebrow .path-card__tag {
+  color: var(--purple-soft);
+}
+.path-a__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 0 0 14px;
+}
+.path-a__body {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 24px;
+  max-width: 540px;
+}
+
+/* The prompt artifact — the visual anchor of Path A. Code Block uses its
+   own canonical dark surface (#0D0D14 / #1E1E2A) per MDS-2026 spec. */
+.prompt-block {
+  position: relative;
+  background: #0D0D14;
+  border: 1px solid #1E1E2A;
+  border-radius: 4px;
+  padding: 22px 124px 14px 22px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-base);
+  line-height: var(--t-mono-base-lh);
+  color: rgba(232, 230, 240, 0.94);
+  word-break: break-word;
+  margin-bottom: 8px;
+}
+.prompt-block__url { color: var(--purple-300); }
+
+/* Blinking caret at the end of the prompt — the one ambient signal */
+.prompt-caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  background: var(--purple-300);
+  vertical-align: text-bottom;
+  margin-left: 4px;
+  animation: caret 1.05s steps(2) infinite;
+}
+@keyframes caret {
+  50% { opacity: 0; }
+}
+.prompt-block__copy {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 92px;
+  height: 28px;
+  box-sizing: border-box;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: transparent;
+  border: 1px solid var(--rule-mid);
+  border-radius: 3px;
+  padding: 0 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.prompt-block__copy:hover {
+  color: var(--text-1);
+  border-color: var(--rule-strong);
+}
+.prompt-block__copy svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.prompt-block__copy[data-state="copied"] {
+  color: var(--live);
+  border-color: rgba(74, 222, 128, 0.40);
+  background: rgba(74, 222, 128, 0.06);
+}
+
+.path-a__runtimes {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.path-a__runtimes-label {
+  color: var(--text-4);
+  margin-right: 12px;
+}
+.path-a__runtimes strong { color: var(--text-2); font-weight: 500; }
+
+/* Path B — destination: spacious, Free. is the anchor, single CTA prominent */
+.path-b__eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+.path-b__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 0 0 14px;
+}
+.path-b__body {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 24px;
+  max-width: 100%;
+}
+.path-b__offer {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 0 0 16px;
+}
+.path-b__offer .free {
+  color: var(--purple-soft);
+}
+/* Path A & Path B both have a flex-grow wrapper around their upper content.
+   The CTA strip below handles bottom anchor + divider rhythm. */
+.path-card__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.path-card__cta-strip {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.path-card__cta-anchor {
+  margin-bottom: 0;
+  align-self: flex-start;
+}
+
+/* Path B's CTA — sits inside the cta-strip */
+.path-b__cta {
+  margin-top: 0;
+  margin-bottom: 0;
+  align-self: flex-start;
+  padding: 14px 22px;
+  font-size: var(--t-mono-small);
+}
+
+/* Both footer dividers share the same rhythm and the same vertical footprint
+   so the CTA buttons that sit above them align horizontally across cards. */
+.path-a__runtimes,
+.path-b__channels {
+  padding-top: 18px;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.path-b__channels {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 0;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.path-b__channels-label {
+  color: var(--text-4);
+  margin-right: 12px;
+}
+.path-b__channels strong { color: var(--text-2); font-weight: 500; }
+
+/* ===================================================================
+   S02 · CAMPAIGNS — featured-card stack
+   ====================================================================== */
+
+.camp {
+  position: relative;
+  padding: 0;
+}
+
+/* Section header rhythm — single metadata band */
+.camp__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 28px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.camp__head-eyebrow { color: var(--text-2); }
+.camp__head-meta {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  text-align: right;
+  white-space: nowrap;
+}
+.camp__head-meta strong { color: var(--text-1); font-weight: 500; margin-right: 6px; }
+.camp__head-meta .sep { color: var(--text-4); margin: 0 22px; }
+
+/* ===================================================================
+   S02 · CAMPAIGNS — featured campaign card archetype
+   ====================================================================== */
+
+.camp {
+  position: relative;
+  padding: 0;
+}
+
+/* Section header band */
+.camp__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.camp__head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.camp__head-eyebrow {
+  font-family: var(--display);
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-h2-track);
+  text-transform: none;
+  color: var(--text-1);
+  margin: 0;
+  text-wrap: pretty;
+}
+.camp__head-desc {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-2);
+  margin: 0;
+  max-width: 560px;
+}
+.camp__head-meta {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  text-align: right;
+  white-space: nowrap;
+  padding-bottom: 4px;
+}
+.camp__head-meta strong { color: var(--text-1); font-weight: 500; margin-right: 6px; }
+.camp__head-meta .sep { color: var(--text-4); margin: 0 22px; }
+
+/* ============================================================
+   Featured campaign card — NEW component archetype
+   Two-column layout: content (left ~60%) + data + CTA (right ~40%)
+   Purple left edge marks the LIVE/active state.
+   ============================================================ */
+.camp__featured {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr);
+  background: #1B1B20;
+  border: 1px solid var(--rule-mid);
+  border-left: 3px solid var(--purple);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  transition: border-color .25s ease-out;
+}
+.camp__featured:hover { border-color: var(--rule-strong); border-left-color: var(--purple); }
+
+/* Content column (left) */
+.camp__featured-body {
+  padding: 36px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-right: 1px solid var(--rule);
+}
+
+/* Data + CTA column (right) */
+.camp__featured-side {
+  padding: 36px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.18);
+}
+/* Side rail status badge sits at the top, above the prize pool */
+.camp__featured-side-status {
+  align-self: flex-start;
+  margin-bottom: 28px;
+}
+
+.camp__featured-side-stat {
+  display: flex;
+  flex-direction: column;
+}
+.camp__featured-side-label {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.camp__featured-prize {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.camp__featured-prize small {
+  font-size: 18px;
+  color: var(--text-3);
+  margin-left: 6px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.camp__featured-side-stat--prize { margin-bottom: 28px; }
+.camp__featured-countdown {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.camp__featured-side-stat--countdown { margin-bottom: 28px; }
+.camp__featured-window {
+  font-family: var(--mono);
+  font-size: var(--t-mono-base);
+  line-height: var(--t-mono-base-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+.camp__featured-window .window-sep {
+  color: var(--text-4);
+  margin: 0 6px;
+  font-weight: 400;
+}
+.camp__featured-side-cta {
+  margin-top: auto;
+  padding-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.camp__featured-side-stat--countdown {
+  margin-bottom: 0;
+}
+.camp__featured-countdown {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  display: block;
+}
+.camp__featured-side-cta .cta {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Content column inner pieces */
+
+/* Imagery slot — large left column. Contentful asset goes here. */
+.camp__media {
+  position: relative;
+  min-height: 460px;
+  background: #0B0B0E;
+  overflow: hidden;
+  border-right: 1px solid var(--rule);
+}
+/* Halftone diamond imagery — black source PNG inverted via filter for dark mode */
+.camp__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/poker-arena-halftones.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Invert: black diamonds → white. Then desaturate and dial back opacity
+     so they sit atmospherically on the dark surface, not as foreground. */
+  filter: invert(1) brightness(1) contrast(1.05);
+  opacity: 0.55;
+  transition: transform 4s ease-out, opacity .3s;
+}
+.camp__featured:hover .camp__media::before {
+  transform: scale(1.04);
+  opacity: 0.72;
+}
+/* Atmospheric purple wash behind the diamonds */
+.camp__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(110, 84, 255, 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* Slow ambient drift on the radial wash */
+.camp__media-wash {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(ellipse 40% 50% at 60% 40%, rgba(74, 222, 128, 0.06) 0%, transparent 60%);
+  animation: media-drift 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes media-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(8%, -6%); }
+}
+/* Watermark wordmark (host) at the bottom-left of the imagery */
+.camp__media-wordmark {
+  position: absolute;
+  bottom: 24px;
+  left: 28px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  opacity: 0.95;
+  z-index: 2;
+}
+.camp__media-host {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  z-index: 2;
+}
+
+/* Content column inner pieces */
+.camp__featured-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.camp__featured-meta {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.camp__featured-meta .sep { color: var(--text-4); }
+.camp__featured-meta strong { color: var(--text-1); font-weight: 500; }
+.camp__featured-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h1-size);
+  line-height: var(--t-h1-lh);
+  letter-spacing: var(--t-h1-track);
+  color: var(--text-1);
+  margin: 0 0 18px;
+  max-width: 520px;
+  text-wrap: pretty;
+}
+.camp__featured-tagline {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: var(--t-body-large);
+  line-height: var(--t-body-large-lh);
+  color: var(--text-2);
+  margin: 0 0 18px;
+  max-width: 520px;
+}
+.camp__featured-blurb {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 28px;
+}
+
+/* Data block — 3-cell scannable grid: prize / countdown / window */
+.camp__featured-data {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 24px;
+}
+.camp__featured-stat-label {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.camp__featured-stat-value {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  transition: color .25s ease-out;
+}
+.camp__featured-stat-value small {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-left: 4px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Hover: countdown numbers brighten to text-1 with a faint purple tint */
+.camp__featured:hover .camp__featured-stat-value--countdown {
+  color: var(--purple-300);
+}
+
+/* Window date pair — same scale for both dates, arrow separator between */
+.camp__featured-stat-value--window {
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.camp__featured-stat-value--window .window-sep {
+  color: var(--text-4);
+  margin: 0 4px;
+  font-weight: 400;
+}
+
+/* Dev.fun wordmark inside eyebrow — same mono caps treatment as the rest */
+.camp__featured-host {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.camp__featured-host-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  border: 1px solid var(--rule-mid);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-1);
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  flex-shrink: 0;
+}
+.camp__featured-host-label { color: var(--text-3); font-weight: 500; }
+.camp__featured-host-name {
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+/* Eyebrow row sits below the LIVE status row */
+.camp__featured-eyebrow {
+  margin-bottom: 18px;
+}
+
+/* Stat-style metadata strip: 3-column grid, label above value */
+.camp__featured-spec {
+  margin-top: auto;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.camp__featured-spec-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.camp__featured-spec-label { color: var(--text-3); }
+.camp__featured-spec-value {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  letter-spacing: var(--t-mono-track);
+  color: var(--text-1);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.camp__featured-spec-value small {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  color: var(--text-3);
+  margin-left: 6px;
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+}
+.camp__featured-spec-code {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--text-1);
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+}
+.camp__featured-spec-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.camp__featured-spec-label { color: var(--text-4); }
+.camp__featured-spec-value {
+  color: var(--text-1);
+  font-weight: 500;
+}
+.camp__featured-spec-code {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rule);
+  color: var(--text-1);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* CTA row — Join Arena (primary) + View Programs (ghost) */
+.camp__featured-ctas {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+.camp__featured-ctas .cta {
+  transition: filter .15s, border-color .15s, transform .12s;
+}
+.camp__featured:hover .cta--primary {
+  filter: brightness(1.10);
+}
+
+/* ============================================================
+   Upcoming row — three quiet placeholders below the featured card
+   ============================================================ */
+.camp__upcoming-label {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin: 32px 0 16px;
+}
+.camp__upcoming {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.camp__upcoming-card {
+  position: relative;
+  border: 1px solid var(--rule-mid);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.015);
+  padding: 20px 22px 22px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .18s;
+}
+.camp__upcoming-card:hover {
+  border-color: var(--rule-strong);
+}
+.camp__upcoming-date {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.camp__upcoming-status {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-top: auto;
+}
+.camp__num {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--purple-soft);
+  padding-bottom: 8px;
+}
+.camp__head-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  letter-spacing: var(--t-h2-track);
+  color: var(--text-1);
+  margin: 0;
+}
+.camp__head-title small {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.camp__head-meta {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: right;
+  padding-bottom: 8px;
+  white-space: nowrap;
+}
+.camp__head-meta strong { color: var(--text-1); font-weight: 500; }
+
+/* LIVE campaign — featured card, full width within the grid */
+.camp__live {
+  position: relative;
+  display: block;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule-mid);
+  border-radius: 0;
+  overflow: hidden;
+  transition: border-color .18s;
+}
+.camp__live:hover { border-color: var(--rule-strong); }
+.camp__live-main {
+  padding: 36px 36px 32px;
+}
+/* Brackets visible at rest on the live card (active state) */
+.camp__live .card-bracket {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+.camp__live-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.pill-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 3px;
+  color: var(--live);
+  background: var(--live-bg);
+  white-space: nowrap;
+}
+.pill-live__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  animation: pulse 1.8s infinite ease-out;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.camp__meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  white-space: nowrap;
+}
+.camp__meta-sep { color: var(--text-4); }
+.camp__meta strong { color: var(--text-1); font-weight: 500; }
+
+.camp__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 4px 0 14px;
+  max-width: 580px;
+}
+.camp__blurb {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 32px;
+  max-width: 560px;
+}
+.camp__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  margin-bottom: 28px;
+}
+.camp__stat-label {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.camp__stat-value {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.camp__stat-value small {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-left: 4px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* Live card CTA row */
+.camp__ctas {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Partner brand wordmark on the live card — large prominent identity above the title */
+.camp__brand {
+  margin: 20px 0 12px;
+}
+.camp__brand-wordmark {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--text-1);
+  display: inline-block;
+}
+
+/* Campaign thumbnail slot — 100×100 area in the top-left of each card.
+   Contentful populates this; designed to hold a logo, image, or AI-generated
+   background. Stays visible when empty via subtle treatment. */
+.camp__thumb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border: 1px solid var(--rule-mid);
+  background: rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.camp__thumb-text {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  padding: 8px;
+}
+/* Empty state for upcoming/teased cards — quiet diagonal hairline pattern + dots */
+.camp__thumb--empty {
+  border-style: dashed;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 6px,
+      rgba(255, 255, 255, 0.025) 6px,
+      rgba(255, 255, 255, 0.025) 7px
+    );
+}
+.camp__thumb--empty::after {
+  content: "···";
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 0.5;
+  letter-spacing: 0.12em;
+  color: var(--text-4);
+}
+
+/* Live card head row — thumbnail slot + meta stack side by side */
+.camp__live-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.camp__live-head-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 6px;
+  min-width: 0;
+}
+
+/* Teased card head row — empty thumbnail slot + eyebrow */
+.camp__teased-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+.camp__teased-head .camp__teased-eyebrow {
+  padding-top: 10px;
+}
+
+/* Teased card visual placeholder — quiet anticipation graphic */
+.camp__teased-visual {
+  margin: 18px 0 18px;
+}
+.camp__teased-dots {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 64px;
+  line-height: 0.55;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  display: inline-block;
+  opacity: 0.6;
+}
+.camp__teased-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  letter-spacing: var(--t-h3-track);
+  color: var(--text-1);
+  margin: 0;
+}
+
+/* Partner wordmark inside the live card */
+.camp__partner {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  text-transform: none;
+}
+.camp__partner-label { color: var(--text-4); }
+.camp__partner-name {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  color: var(--text-1);
+}
+
+/* Teased card — quieter, smaller, no CTA, no brackets */
+.camp__teased {
+  position: relative;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 36px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color .18s;
+}
+.camp__teased:hover { border-color: var(--rule-mid); }
+.camp__teased-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.camp__teased-wordmark {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--text-1);
+  margin: 16px 0 0;
+  opacity: 0.85;
+}
+.camp__teased-blurb {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-3);
+  margin: auto 0 0;
+}
+
+/* Quiet footer line below the grid */
+.camp__foot {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-4);
+  text-align: center;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+/* Right rail: live counters panel */
+.camp__live-panel-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  white-space: nowrap;
+  gap: 12px;
+}
+.camp__live-panel-head .panel-live {
+  color: var(--live);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.camp__live-panel-head .panel-live::before {
+  content: "";
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+}
+
+.camp__live-counter-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.camp__live-counter-value {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.camp__live-counter-value small {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-left: 6px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.camp__countdown {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.camp__cd-num {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+}
+.camp__cd-unit {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-right: 4px;
+}
+.camp__live-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+.camp__cta-primary,
+.camp__cta-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.camp__cta-primary {
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(110,84,255,0) 0%, rgba(255,255,255,0.14) 100%),
+    var(--purple);
+  color: var(--text-1);
+  border: 0;
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0.5px 0 rgba(0,0,0,0.25);
+}
+.camp__cta-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--rule-mid);
+}
+.camp__cta-ghost:hover { border-color: var(--rule-strong); color: var(--text-1); }
+
+/* Coming-soon card — quiet, single, below the live card */
+.camp__soon {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 48px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--surface-1);
+  transition: border-color .18s;
+}
+.camp__soon:hover { border-color: var(--rule-strong); }
+.camp__soon-status {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.camp__soon-status::before {
+  content: "";
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text-3);
+}
+.camp__soon-text {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+}
+.camp__soon-text strong { color: var(--text-1); font-weight: 500; }
+.camp__soon-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ===================================================================
+   S03 · ANNOUNCEMENTS — editorial row-list with left section rail
+   ====================================================================== */
+
+.anno {
+  position: relative;
+  padding: 0;
+  background: var(--bg-elev-1);
+}
+.anno__grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 80px;
+  align-items: flex-start;
+}
+.anno__rail {
+  position: sticky;
+  top: 32px;
+}
+.anno__rail-num {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--purple-soft);
+  margin-bottom: 16px;
+}
+.anno__rail-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  letter-spacing: var(--t-h2-track);
+  color: var(--text-1);
+  margin: 0 0 16px;
+}
+.anno__rail-body {
+  font-family: var(--sans);
+  font-size: var(--t-body-base);
+  line-height: var(--t-body-base-lh);
+  color: var(--text-2);
+  margin: 0 0 24px;
+}
+.anno__rail-foot {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.anno__list {
+  border-top: 1px solid var(--rule);
+}
+.anno__row {
+  display: grid;
+  grid-template-columns: 120px 110px 1fr 90px;
+  gap: 40px;
+  padding: 36px 16px;
+  margin: 0 -16px;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+  transition: background .22s ease-out;
+}
+.anno__row:hover {
+  background: rgba(110, 84, 255, 0.08);
+}
+.anno__row:hover .anno__title {
+  color: var(--purple-300);
+}
+.anno__row:hover .anno__more {
+  color: var(--purple-300);
+}
+.anno__date {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.anno__tag {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--rule-mid);
+  border-radius: 3px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.anno__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h5-size);
+  line-height: var(--t-h5-lh);
+  letter-spacing: var(--t-h5-track);
+  color: var(--text-1);
+  margin: 0 0 12px;
+  transition: color .22s ease-out;
+}
+.anno__body {
+  font-family: var(--sans);
+  font-size: var(--t-body-small);
+  line-height: var(--t-body-small-lh);
+  color: var(--text-2);
+  margin: 0;
+  max-width: 640px;
+}
+.anno__more {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-1);
+  text-align: right;
+  white-space: nowrap;
+  transition: color .22s ease-out;
+}
+.anno__more:hover { color: var(--purple-soft); }
+
+/* ===================================================================
+   S04 · DISCOVERY — tabular row-list
+   ====================================================================== */
+
+.disc {
+  position: relative;
+  padding: 0;
+}
+.disc__head {
+  display: grid;
+  grid-template-columns: 80px 1fr 320px;
+  gap: 24px;
+  align-items: flex-end;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0;
+}
+.disc__num {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 600;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--purple-soft);
+  padding-bottom: 8px;
+}
+.disc__head-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  letter-spacing: var(--t-h2-track);
+  color: var(--text-1);
+  margin: 0;
+}
+.disc__head-title small {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.disc__head-meta {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 8px;
+  text-align: right;
+}
+.disc__head-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-1);
+}
+.disc__head-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+/* Tabular list — each dApp is a row */
+.disc__table-head {
+  display: grid;
+  grid-template-columns: 44px 1.5fr 2.2fr 1.6fr 90px;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+.disc__row {
+  display: grid;
+  grid-template-columns: 44px 1.5fr 2.2fr 1.6fr 90px;
+  gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  transition: background .12s;
+}
+.disc__row:hover {
+  background: var(--surface-1);
+}
+.disc__avatar {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-mid);
+}
+.disc__nameblock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.disc__name {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-body-large);
+  line-height: 1.25;
+  letter-spacing: var(--t-h5-track);
+  color: var(--text-1);
+}
+.disc__domain {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.disc__desc {
+  font-family: var(--sans);
+  font-size: var(--t-body-small);
+  line-height: var(--t-body-small-lh);
+  color: var(--text-2);
+}
+.disc__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.disc__tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.disc__version {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: right;
+}
+.disc__version strong { color: var(--text-1); font-weight: 500; }
+
+/* ============================================================
+   Discovery card grid — NEW component archetype (Discovery Card)
+   3-column grid of taller-than-wide cards.
+   ============================================================ */
+.disc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 28px;
+}
+.disc__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 28px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule-mid);
+  border-radius: 4px;
+  transition: background .22s ease-out, border-color .22s ease-out;
+  cursor: pointer;
+}
+.disc__card:hover {
+  background: var(--bg-elev-2);
+  border-color: var(--rule-strong);
+}
+.disc__card:hover .disc__card-name {
+  color: var(--text-1);
+}
+.disc__card:hover .disc__card-link {
+  color: var(--text-1);
+}
+
+/* Card header — avatar + name/handle stack, horizontal */
+.disc__card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.disc__card-id {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Avatar — MDS Avatar component, Medium size (48px), circle.
+   Hover state: outer border becomes Monad Purple AND a 1px inner ring in
+   border/default appears inset 1px from the edge (per the figma spec). */
+.disc__card-avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  border: 1px solid var(--rule-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  flex-shrink: 0;
+  transition: border-color .22s ease-out;
+  box-sizing: border-box;
+}
+/* Inner highlight ring — appears only on hover */
+.disc__card-avatar::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  border-radius: 3px;
+  border: 1px solid var(--rule-mid);
+  opacity: 0;
+  pointer-events: none;
+  box-sizing: border-box;
+  transition: opacity .22s ease-out;
+}
+.disc__card:hover .disc__card-avatar { border-color: var(--purple-soft); }
+.disc__card:hover .disc__card-avatar::after { opacity: 1; }
+.disc__card-avatar[data-thumb="kuru"]      { background: #C8442B; }
+.disc__card-avatar[data-thumb="magma"]     { background: #D77A2A; }
+.disc__card-avatar[data-thumb="nadfun"]    { background: #D8B628; color: #1a1a1a; }
+.disc__card-avatar[data-thumb="apriori"]   { background: #6E54FF; }
+.disc__card-avatar[data-thumb="bean"]      { background: #4A9D5A; }
+.disc__card-avatar[data-thumb="openocean"] { background: #2E8A8A; }
+
+/* Inline name no longer needs bottom margin (handle stacks below) */
+.disc__card-name {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h5-size);
+  line-height: var(--t-h5-lh);
+  letter-spacing: var(--t-h5-track);
+  color: var(--text-1);
+  margin: 0;
+  transition: color .22s ease-out;
+}
+.disc__card-handle {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+  margin-bottom: 0;
+}
+.disc__card-desc {
+  font-family: var(--sans);
+  font-size: var(--t-body-small);
+  line-height: var(--t-body-small-lh);
+  color: var(--text-2);
+  margin: 0 0 22px;
+}
+.disc__card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+.disc__card-tag {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--rule-mid);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.disc__card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 18px;
+  margin-top: auto;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+}
+.disc__card-link {
+  color: var(--text-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color .22s ease-out;
+}
+.disc__card-link .ph {
+  font-size: 12px;
+  display: inline-block;
+  transition: transform .15s cubic-bezier(.23, 1, .32, 1);
+}
+.disc__card:hover .disc__card-link .ph-arrow-up-right {
+  transform: translate(2px, -2px);
+}
+.disc__card-version {
+  color: var(--text-3);
+}
+
+.disc__foot {
+  margin-top: 32px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ===================================================================
+   S05 · API HUB — dark band teaser
+   ====================================================================== */
+
+.api {
+  position: relative;
+  background: var(--bg-deep);
+  padding: 0;
+  overflow: hidden;
+}
+.api::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 800px 400px at 60% 30%, rgba(131, 110, 249, 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.api__frame { position: relative; }
+.api__copy { max-width: 800px; }
+.api__eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-mono-small);
+  line-height: var(--t-mono-small-lh);
+  font-weight: 500;
+  letter-spacing: var(--t-mono-track);
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 24px;
+}
+.api__eyebrow strong {
+  color: var(--purple-soft);
+  margin-right: 14px;
+}
+.api__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  letter-spacing: var(--t-h2-track);
+  color: var(--text-1);
+  margin: 0 0 24px;
+}
+.api__blurb {
+  font-family: var(--sans);
+  font-size: var(--t-body-large);
+  line-height: var(--t-body-large-lh);
+  color: var(--text-2);
+  margin: 0 0 36px;
+  max-width: 640px;
+}
+.api__ctas {
+  display: flex;
+  gap: 12px;
+}
+
+/* ===================================================================
+   Footer
+   ====================================================================== */
+
+.foot {
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--rule);
+  background: var(--bg);
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.foot__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.foot__brand {
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+.foot__brand span {
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-left: 14px;
+}
+.foot__links {
+  display: flex;
+  gap: 24px;
+}
+.foot__links a:hover { color: var(--text-1); }
+
+/* ===================================================================
+   Mobile (≤640px) — MDS-2026 Mobile breakpoint (375px baseline, 4 cols,
+   16px gutter, 16px edge margin). Hero adapts to single column with
+   tightened type scale and full-width CTAs.
+   ====================================================================== */
+@media (max-width: 640px) {
+
+  /* Section frame: lose left/right borders, tighter vertical padding,
+     match Mobile edge-padding (16px). */
+  .section-frame {
+    padding: 56px 26px;
+    border-left: 0;
+    border-right: 0;
+  }
+  .section-frame__sq { display: none; }
+
+  /* Outer section wrappers — flatten the 16px nesting since the
+     section-frame already provides edge padding. */
+  section, .foot {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .nav-placeholder {
+    margin: 0 26px;
+  }
+
+  /* Frame width caps off, fills viewport */
+  .frame {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Hero dot pattern slightly smaller for mobile density */
+  .hero::before {
+    background-size: 14px 14px;
+  }
+
+  /* Topbar: stack vertically — LIVE badge first, dates row below */
+  .hero__topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    white-space: normal;
+  }
+  .hero__topbar-dates {
+    text-align: left;
+    white-space: normal;
+  }
+
+  /* Headline drops from Display (64) to h1 (48) */
+  .hero__headline {
+    font-size: var(--t-h1-size);
+    line-height: var(--t-h1-lh);
+    letter-spacing: var(--t-h1-track);
+    margin: 28px 0 16px;
+    max-width: 100%;
+  }
+
+  /* Tagline body/base */
+  .hero__tag {
+    font-size: var(--t-body-base);
+    line-height: var(--t-body-base-lh);
+    margin: 0 0 28px;
+    max-width: 100%;
+  }
+
+  /* Stack the two path cards */
+  .hero__paths {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Cards tighten padding */
+  .path-a,
+  .path-b {
+    padding: 24px;
+  }
+
+  /* Corner brackets aren't useful on mobile (no hover); hide them */
+  .card-bracket { display: none; }
+
+  /* Icon frame steps down slightly */
+  .path-card__icon {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+    margin-bottom: 18px;
+  }
+  .path-icon { width: 28px; height: 28px; }
+
+  /* Titles: h3 (30) → h4 (24) */
+  .path-a__title,
+  .path-b__title {
+    font-size: var(--t-h4-size);
+    line-height: var(--t-h4-lh);
+    letter-spacing: var(--t-h4-track);
+  }
+  .path-a__body,
+  .path-b__body {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+    max-width: 100%;
+  }
+
+  /* Prompt block: wrap text, COPY moves to bottom-right with 44px height */
+  .prompt-block {
+    font-size: 12px;
+    line-height: 1.55;
+    padding: 18px 18px 64px;
+    word-break: break-word;
+  }
+  .prompt-block__copy {
+    top: auto;
+    bottom: 14px;
+    right: auto;
+    left: 14px;
+    min-height: 36px;
+    height: auto;
+    padding: 8px 12px;
+  }
+
+  /* CTAs go full-width on mobile, min touch target 44px */
+  .cta,
+  .path-card__cta-anchor,
+  .path-b__cta {
+    width: 100%;
+    justify-content: center;
+    align-self: stretch;
+    min-height: 44px;
+  }
+
+  /* Footers: keep mono small, allow wrap, no min-height fight */
+  .path-a__runtimes,
+  .path-b__channels {
+    font-size: 11px;
+    padding-top: 14px;
+    min-height: 0;
+    display: block;
+  }
+  .path-a__runtimes strong,
+  .path-b__channels strong {
+    display: inline;
+  }
+
+  /* Path B has no need to anchor its CTA to a tall main wrapper on mobile */
+  .path-card__main {
+    flex: 0 0 auto;
+  }
+
+  /* =============== Campaigns section =============== */
+
+  /* Hero head row: stack headline + eyebrow vertically. Eyebrow goes above */
+  .hero__head-row {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 16px 0 24px;
+  }
+  .hero__head-eyebrow {
+    text-align: left;
+    padding-top: 0;
+    white-space: normal;
+  }
+
+  /* Section title + description stack vertically, meta wraps below */
+  .camp__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+  .camp__head-left {
+    width: 100%;
+  }
+  .camp__head-eyebrow {
+    font-size: var(--t-h3-size);
+    line-height: var(--t-h3-lh);
+    letter-spacing: var(--t-h3-track);
+  }
+  .camp__head-desc {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+    max-width: 100%;
+  }
+  .camp__head-meta {
+    text-align: left;
+    padding-bottom: 0;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  /* Featured card: stack content + side */
+  .camp__featured {
+    grid-template-columns: 1fr;
+  }
+  .camp__featured-body {
+    padding: 24px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .camp__featured-side {
+    padding: 24px 20px;
+  }
+  .camp__featured-head {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .camp__featured-title {
+    font-size: var(--t-h4-size);
+    line-height: var(--t-h4-lh);
+    letter-spacing: var(--t-h4-track);
+  }
+  .camp__featured-blurb {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+    margin-bottom: 22px;
+  }
+  .camp__featured-prize { font-size: 40px; }
+  .camp__featured-prize small { font-size: 14px; }
+
+  /* Spec row: stack vertically on mobile so labels aren't crammed */
+  .camp__featured-spec {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* CTA full-width */
+  .camp__featured-side-cta .cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Upcoming row: 3 cols → 1 col stack */
+  .camp__upcoming {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .camp__upcoming-card {
+    min-height: 72px;
+    padding: 16px 18px;
+  }
+
+  /* =============== Announcements section =============== */
+
+  /* Stack rail + list vertically */
+  .anno__grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .anno__rail {
+    position: static;
+  }
+  .anno__rail-title {
+    font-size: var(--t-h2-size);
+    line-height: var(--t-h2-lh);
+    letter-spacing: var(--t-h2-track);
+  }
+  .anno__rail-body {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+  }
+
+  /* Announcement rows: 4-col grid → 2-row stack
+     Row 1: date + tag (horizontal)
+     Row 2: title + body + Read link */
+  .anno__row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 26px;
+    margin: 0 -26px;
+  }
+  .anno__row > div:first-child,
+  .anno__row > div:nth-child(2) {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* Combine date + tag onto one line via a sibling wrapper trick */
+  .anno__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .anno__date::after {
+    content: "";
+    width: 1px;
+    height: 12px;
+    background: var(--rule-mid);
+    margin-left: 4px;
+  }
+  .anno__tag {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+  .anno__title {
+    font-size: var(--t-h5-size);
+    line-height: var(--t-h5-lh);
+    margin: 0 0 8px;
+  }
+  .anno__body {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+  }
+  .anno__more {
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  /* =============== Discovery section =============== */
+
+  /* Section head: stack from 3-col grid to vertical */
+  .disc__head {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .disc__head-title {
+    font-size: var(--t-h3-size);
+    line-height: var(--t-h3-lh);
+    letter-spacing: var(--t-h3-track);
+  }
+  .disc__head-meta {
+    text-align: left;
+    padding-bottom: 0;
+  }
+
+  /* Card grid: 3 cols → 1 col stack */
+  .disc__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .disc__card {
+    padding: 20px;
+  }
+  .disc__card-header {
+    margin-bottom: 18px;
+  }
+  .disc__card-desc {
+    font-size: var(--t-body-small);
+    line-height: var(--t-body-small-lh);
+    margin-bottom: 18px;
+  }
+  .disc__card-tags {
+    margin-bottom: 18px;
+  }
+}
