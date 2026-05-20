@@ -18,7 +18,7 @@ export const FeaturedCampaignSchema = z.object({
 })
 
 export const UpcomingCampaignSchema = z.object({
-  weeks: z.string(),
+  date: z.string(),
 })
 
 export type CampaignStatus = z.infer<typeof CampaignStatusSchema>
