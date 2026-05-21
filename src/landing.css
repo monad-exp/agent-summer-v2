@@ -1433,7 +1433,7 @@ button { font-family: inherit; cursor: pointer; }
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("assets/poker-arena-halftones.png");
+  background-image: url("/assets/poker-arena-halftones.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

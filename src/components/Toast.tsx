@@ -1,3 +1,5 @@
+'use client'
+
 import { useToastStore } from '../stores/toastStore'
 import type { Toast as ToastType } from '../types/toast'
 

@@ -1,3 +1,5 @@
+'use client'
+
 import { StatusBadge } from '../../components/StatusBadge'
 import { useCountdown } from '../../hooks/useCountdown'
 import type { FeaturedCampaign as FeaturedCampaignType } from '../../types/campaign'

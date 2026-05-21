@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useRef, useState } from 'react'
 
 const PROMPT_TEXT = 'read https://app.monad.xyz/agent/skill.md and follow the instructions'

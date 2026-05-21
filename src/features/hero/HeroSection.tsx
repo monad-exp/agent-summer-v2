@@ -1,3 +1,5 @@
+'use client'
+
 import { SectionFrame } from '../../components/SectionFrame'
 import { useAgentCounter } from '../../hooks/useAgentCounter'
 import { PathA } from './PathA'
