@@ -1,8 +1,8 @@
 # Project Guidelines
 
 ## Tech Stack
-- Vite + React 19 + TypeScript (strict)
-- Tailwind CSS + shadcn/ui
+- Next.js 16 (App Router) + React 19 + TypeScript (strict)
+- Tailwind CSS v4
 - TanStack Query, Zod, react-hook-form, Zustand
 
 ## TypeScript Rules
@@ -20,19 +20,19 @@
 
 ## Folder Structure
 src/
+├── app/            # Next.js App Router (routes, layouts, pages)
 ├── components/     # Reusable UI components
 ├── features/       # Domain features
 ├── hooks/
 ├── lib/
 ├── types/
-├── stores/
-└── App.tsx
+└── stores/
 
 ## Preferred Libraries
 - Data fetching: TanStack Query
 - Forms: react-hook-form + Zod
 - State: Zustand
-- Styling: Tailwind + shadcn/ui patterns
+- Styling: Tailwind v4
 
 ## General Rules
 - Always handle loading and error states explicitly.
