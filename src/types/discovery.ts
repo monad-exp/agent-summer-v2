@@ -1,13 +1,16 @@
 import { z } from 'zod'
 
-export const DiscoveryCardSchema = z.object({
+export const DiscoveryAppSchema = z.object({
   id: z.string(),
+  slug: z.string(),
   name: z.string(),
-  handle: z.string(),
   description: z.string(),
-  tags: z.array(z.string()),
-  version: z.string(),
-  thumbKey: z.string(),
+  websiteUrl: z.string(),
+  logoUrl: z.string(),
+  categories: z.array(z.string()).min(1),
+  skillMdUrl: z.string(),
+  skillsCount: z.number().int().nonnegative(),
+  verifiedAt: z.string().optional(),
 })
 
-export type DiscoveryCard = z.infer<typeof DiscoveryCardSchema>
+export type DiscoveryApp = z.infer<typeof DiscoveryAppSchema>
