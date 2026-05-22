@@ -1,14 +1,23 @@
 import { z } from 'zod'
 
-export const AnnouncementTagSchema = z.enum(['Release', 'Partner', 'Launch', 'Campaign'])
+export const AnnouncementCategorySchema = z.enum([
+  'release',
+  'partner',
+  'launch',
+  'campaign',
+  'protocol',
+])
 
 export const AnnouncementSchema = z.object({
   id: z.string(),
-  date: z.string(),
-  tag: AnnouncementTagSchema,
+  slug: z.string(),
   title: z.string(),
-  body: z.string(),
+  summary: z.string(),
+  url: z.string(),
+  datePublished: z.string(),
+  tags: z.array(z.string()).optional(),
+  category: AnnouncementCategorySchema,
 })
 
-export type AnnouncementTag = z.infer<typeof AnnouncementTagSchema>
+export type AnnouncementCategory = z.infer<typeof AnnouncementCategorySchema>
 export type Announcement = z.infer<typeof AnnouncementSchema>

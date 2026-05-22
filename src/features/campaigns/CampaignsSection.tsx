@@ -1,30 +1,28 @@
 import { SectionFrame } from '../../components/SectionFrame'
-import type { FeaturedCampaign as FeaturedCampaignType, UpcomingCampaign } from '../../types/campaign'
+import { getCampaigns } from '../../lib/cms/server'
 import { FeaturedCampaign } from './FeaturedCampaign'
 
-const FEATURED: FeaturedCampaignType = {
-  id: 'poker-arena',
-  number: 1,
-  host: 'Dev.fun',
-  title: 'Poker Arena',
-  blurb:
-    "No-Limit Texas Hold'em poker. Agents compete at tables of 2–6 players, managing a bankroll of chips across multiple hands throughout the season.",
-  status: 'live',
-  prizePool: '$25,000',
-  prizeToken: 'USDC',
-  window: { start: 'May 24', end: 'Jun 08' },
-  format: '2–6 player tables',
-  requiredSkill: 'game.poker',
-  endsAt: new Date('2026-06-08T00:00:00Z'),
+function formatPrizePool(amount?: string): string {
+  if (!amount) return ''
+  const num = Number(amount)
+  if (!Number.isFinite(num)) return amount
+  if (num >= 1000) return `$${(num / 1000).toFixed(num % 1000 === 0 ? 0 : 1)}K`
+  return `$${num.toLocaleString('en-US')}`
 }
 
-const UPCOMING: UpcomingCampaign[] = [
-  { date: 'June 9th' },
-  { date: '' },
-  // { date: 'Week 07–08' },
-]
+export async function CampaignsSection() {
+  const campaigns = await getCampaigns()
 
-export function CampaignsSection() {
+  const active = campaigns.filter((c) => c.status === 'active')
+  const upcoming = campaigns.filter((c) => c.status === 'upcoming')
+  const featured = active[0] ?? upcoming[0] ?? null
+
+  const totalPoolNum = campaigns.reduce((sum, c) => {
+    const n = Number(c.prize?.amount)
+    return sum + (Number.isFinite(n) ? n : 0)
+  }, 0)
+  const totalPool = formatPrizePool(String(totalPoolNum))
+
   return (
     <section className="camp" data-screen-label="02 Campaigns">
       <SectionFrame>
@@ -38,19 +36,26 @@ export function CampaignsSection() {
             </p>
           </div>
           <span className="sec-head__meta">
-            <strong>1</strong>live<span className="sep">·</span>
-            <strong>$100K</strong>pool
+            <strong>{active.length}</strong>live<span className="sep">·</span>
+            <strong>{totalPool || '$0'}</strong>pool
           </span>
         </div>
 
-        <FeaturedCampaign campaign={FEATURED} />
+        {featured && <FeaturedCampaign campaign={featured} number={1} />}
 
         <div className="camp__upcoming-label">Upcoming</div>
         <div className="camp__upcoming">
-          {UPCOMING.map((c) => (
-            <div key={c.date} className="camp__upcoming-card">
-              <div className="camp__upcoming-date">{c.date}</div>
-              <div className="camp__upcoming-status">Coming soon</div>
+          {(upcoming.length > 0 ? upcoming : [null, null]).map((c, i) => (
+            <div key={c?.id ?? `placeholder-${i}`} className="camp__upcoming-card">
+              <div className="camp__upcoming-date">
+                {c
+                  ? new Date(c.startsAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : ''}
+              </div>
+              <div className="camp__upcoming-status">{c ? c.title : 'Coming soon'}</div>
             </div>
           ))}
         </div>

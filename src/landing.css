@@ -2653,8 +2653,16 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: -0.02em;
   color: #ffffff;
   flex-shrink: 0;
+  overflow: hidden;
   transition: border-color .22s ease-out;
   box-sizing: border-box;
+}
+.disc__card-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+  display: block;
 }
 /* Inner highlight ring — appears only on hover */
 .disc__card-avatar::after {

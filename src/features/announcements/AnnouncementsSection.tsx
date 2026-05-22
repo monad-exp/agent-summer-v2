@@ -1,38 +1,27 @@
 import { SectionFrame } from '../../components/SectionFrame'
-import type { Announcement } from '../../types/announcement'
+import { getAnnouncements } from '../../lib/cms/server'
+import type { AnnouncementCategory } from '../../types/announcement'
 
-const ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: 'skill-v02',
-    date: 'May 17, 2026',
-    tag: 'Release',
-    title: 'Skill.md v0.2 ships wallet permissions and rate limits',
-    body: 'Agents declare scoped spend and rate budgets at registration. v0.1 manifests remain valid.',
-  },
-  {
-    id: 'x402-beta',
-    date: 'May 12, 2026',
-    tag: 'Partner',
-    title: 'x402 micropayments enter open beta on Monad',
-    body: 'Pay per call across nine launch partners. Agents settle in MON at single-block finality, no API keys, no subscriptions.',
-  },
-  {
-    id: 'clawdi-prod',
-    date: 'May 06, 2026',
-    tag: 'Launch',
-    title: 'Clawdi creation flow ships in production',
-    body: 'Hosted agents in under 90 seconds. Confidential compute via Phala. Channels: Telegram, WhatsApp, Signal.',
-  },
-  {
-    id: 'agent-summer-open',
-    date: 'May 01, 2026',
-    tag: 'Campaign',
-    title: 'Agent Summer opens with $250K across six campaigns',
-    body: 'Six ecosystem teams committed prize pools for the ten-week run. First campaign live now; reveals weekly.',
-  },
-]
+const TAG_LABEL: Record<AnnouncementCategory, string> = {
+  release: 'Release',
+  partner: 'Partner',
+  launch: 'Launch',
+  campaign: 'Campaign',
+  protocol: 'Protocol',
+}
 
-export function AnnouncementsSection() {
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+export async function AnnouncementsSection() {
+  const announcements = await getAnnouncements()
+
   return (
     <section className="anno" data-screen-label="03 Announcements">
       <SectionFrame>
@@ -46,20 +35,20 @@ export function AnnouncementsSection() {
           </div>
 
           <div className="anno__list">
-            {ANNOUNCEMENTS.map((a) => (
-              <div key={a.id} className="anno__row">
-                <div className="anno__date">{a.date}</div>
+            {announcements.map((a) => (
+              <a key={a.id} className="anno__row" href={a.url} target="_blank" rel="noreferrer">
+                <div className="anno__date">{formatDate(a.datePublished)}</div>
                 <div>
-                  <span className="anno__tag">{a.tag}</span>
+                  <span className="anno__tag">{TAG_LABEL[a.category]}</span>
                 </div>
                 <div>
                   <h3 className="anno__title">{a.title}</h3>
-                  <p className="anno__body">{a.body}</p>
+                  <p className="anno__body">{a.summary}</p>
                 </div>
                 <div className="anno__more">
                   Read <i className="ph ph-arrow-up-right" aria-hidden="true" />
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
