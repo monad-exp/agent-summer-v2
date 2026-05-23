@@ -19,7 +19,7 @@ export function ApiHubSection() {
 
         <div className="api__ctas">
           <button className="cta cta--primary" type="button">
-            Explore the API hub
+            Explore the API hub (Coming soon)
             <i className="ph ph-arrow-up-right" aria-hidden="true" />
           </button>
           <button className="cta cta--ghost" type="button">

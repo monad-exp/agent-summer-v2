@@ -38,7 +38,12 @@ export function PathA() {
       </div>
 
       <div className="path-card__cta-strip">
-        <button className="cta cta--ghost path-card__cta-anchor" type="button">
+        <button
+          className="cta cta--ghost path-card__cta-anchor"
+          type="button"
+          disabled
+          style={{ opacity: 0.4, cursor: 'not-allowed' }}
+        >
           View skill.md
           <i className="ph ph-arrow-up-right" aria-hidden="true" />
         </button>

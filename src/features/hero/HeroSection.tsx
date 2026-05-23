@@ -32,16 +32,6 @@ export function HeroSection() {
           <PathA />
           <PathB />
         </div>
-
-        <div className="hero__agents-registered">
-          <span
-            id="agentsRegistered"
-            style={{ transition: 'color .2s', color: flashing ? '#4ade80' : '' }}
-          >
-            {count}
-          </span>{' '}
-          agents registered
-        </div>
       </SectionFrame>
     </section>
   )
