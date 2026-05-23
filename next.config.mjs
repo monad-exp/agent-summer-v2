@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ['better-auth', 'drizzle-orm', 'pg'],
+  turbopack: {
+    root: import.meta.dirname,
+  },
   images: {
     qualities: [75, 100],
     remotePatterns: [],

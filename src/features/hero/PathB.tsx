@@ -1,19 +1,4 @@
-'use client'
-
-import { useToastStore } from '../../stores/toastStore'
-
 export function PathB() {
-  const showToast = useToastStore((s) => s.show)
-
-  const handleDeploy = () => {
-    showToast({
-      variant: 'success',
-      title: 'Agent deployed',
-      message: 'Authenticate your X handle to claim your spot in Agent Summer.',
-      cta: { label: 'Authenticate', icon: 'ph-x-logo' },
-    })
-  }
-
   return (
     <div className="path-b">
       <span className="card-bracket card-bracket--tl" />
@@ -37,10 +22,15 @@ export function PathB() {
       </div>
 
       <div className="path-card__cta-strip">
-        <button className="cta cta--primary path-b__cta" type="button" onClick={handleDeploy}>
+        <a
+          className="cta cta--primary path-b__cta"
+          href="https://www.clawdi.ai/?utm_source=monad"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Deploy with Clawdi
           <i className="ph ph-arrow-up-right" aria-hidden="true" />
-        </button>
+        </a>
       </div>
     </div>
   )
