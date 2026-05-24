@@ -18,14 +18,19 @@ export function ApiHubSection() {
         </div>
 
         <div className="api__ctas">
-          <button className="cta cta--primary" type="button">
+          <button className="cta cta--primary" type="button" disabled>
             Explore the API hub (Coming soon)
             <i className="ph ph-arrow-up-right" aria-hidden="true" />
           </button>
-          <button className="cta cta--ghost" type="button">
+          <a
+            className="cta cta--ghost"
+            href="https://docs.monad.xyz/guides/x402"
+            target="_blank"
+            rel="noopener noreferrer"
+            >
             Read x402 spec
             <i className="ph ph-arrow-up-right" aria-hidden="true" />
-          </button>
+          </a>
         </div>
       </SectionFrame>
     </section>

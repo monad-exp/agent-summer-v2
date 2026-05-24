@@ -5,10 +5,7 @@ import { useAgentCounter } from '../../hooks/useAgentCounter'
 import { PathA } from './PathA'
 import { PathB } from './PathB'
 
-const INITIAL_AGENT_COUNT = 1247
-
 export function HeroSection() {
-  const { count, flashing } = useAgentCounter(INITIAL_AGENT_COUNT)
 
   return (
     <section className="hero" data-screen-label="01 Hero">

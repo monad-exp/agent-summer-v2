@@ -11,13 +11,13 @@ export function PathB() {
       <div className="path-card__main">
         <h2 className="path-b__title">Create a new agent.</h2>
         <p className="path-b__body">
-          Clawdi spins up a hosted OpenClaw agent on the channel you want.
+          Clawdi spins up a hosted Hermes/Openclaw agent on the channel you want.
           <br />
-          Free. No code. Sign once, it's live.
+          Start free. No code. Pay-as-you-go with MON.
         </p>
         <div className="path-b__channels">
           <span className="path-b__channels-label">Deploys to</span>
-          <strong>Telegram · WhatsApp · Signal</strong>
+          <strong>Telegram · WhatsApp · Discord</strong>
         </div>
       </div>
 
