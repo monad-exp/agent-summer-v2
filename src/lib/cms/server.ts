@@ -21,22 +21,23 @@ import type {
   CmsSkillMarkdownItem,
 } from './types'
 
-const SPACE_ID = process.env.CONTENTFUL_SPACE_ID
-const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
-const PREVIEW_TOKEN = process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT ?? 'master'
 const PREVIEW_MODE = process.env.IS_PREVIEW_MODE_ENABLED === 'true'
 
-if (!SPACE_ID || !ACCESS_TOKEN) {
-  throw new Error('CONTENTFUL_SPACE_ID and CONTENTFUL_ACCESS_TOKEN must be set')
-}
-
 async function fetchGraphQL<T>(query: string): Promise<T> {
-  const usePreview = PREVIEW_MODE && Boolean(PREVIEW_TOKEN)
-  const token = usePreview ? PREVIEW_TOKEN! : ACCESS_TOKEN!
+  const spaceId = process.env.CONTENTFUL_SPACE_ID
+  const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
+  const previewToken = process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
+
+  if (!spaceId || !accessToken) {
+    throw new Error('CONTENTFUL_SPACE_ID and CONTENTFUL_ACCESS_TOKEN must be set')
+  }
+
+  const usePreview = PREVIEW_MODE && Boolean(previewToken)
+  const token = usePreview ? previewToken! : accessToken
 
   const response = await fetch(
-    `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}/environments/${ENVIRONMENT}`,
+    `https://graphql.contentful.com/content/v1/spaces/${spaceId}/environments/${ENVIRONMENT}`,
     {
       method: 'POST',
       headers: {

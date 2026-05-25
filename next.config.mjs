@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['better-auth', 'drizzle-orm', 'pg'],
+  serverExternalPackages: ['better-auth', '@better-auth/core', '@better-auth/kysely-adapter', 'drizzle-orm', 'pg', 'kysely'],
   turbopack: {
     root: import.meta.dirname,
   },
