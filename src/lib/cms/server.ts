@@ -13,6 +13,12 @@ import {
   transformCampaigns,
   transformDiscoveryApps,
 } from './core'
+import {
+  getMockAnnouncements,
+  getMockCampaigns,
+  getMockDiscoveryApps,
+  getMockSkillMarkdown,
+} from './mock'
 import type {
   CmsAnnouncementsData,
   CmsCampaignsData,
@@ -23,6 +29,7 @@ import type {
 
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT ?? 'master'
 const PREVIEW_MODE = process.env.IS_PREVIEW_MODE_ENABLED === 'true'
+const MOCK_MODE = process.env.CONTENTFUL_MOCK === 'true'
 
 async function fetchGraphQL<T>(query: string): Promise<T> {
   const spaceId = process.env.CONTENTFUL_SPACE_ID
@@ -60,6 +67,7 @@ async function fetchGraphQL<T>(query: string): Promise<T> {
 }
 
 export async function getCampaigns(): Promise<Campaign[]> {
+  if (MOCK_MODE) return getMockCampaigns()
   try {
     const data = await fetchGraphQL<CmsCampaignsData>(CAMPAIGNS_QUERY(PREVIEW_MODE))
     return transformCampaigns(data)
@@ -70,10 +78,9 @@ export async function getCampaigns(): Promise<Campaign[]> {
 }
 
 export async function getAnnouncements(): Promise<Announcement[]> {
+  if (MOCK_MODE) return getMockAnnouncements()
   try {
-    const data = await fetchGraphQL<CmsAnnouncementsData>(
-      ANNOUNCEMENTS_QUERY(PREVIEW_MODE),
-    )
+    const data = await fetchGraphQL<CmsAnnouncementsData>(ANNOUNCEMENTS_QUERY(PREVIEW_MODE))
     return transformAnnouncements(data)
   } catch (error) {
     console.error('[cms] getAnnouncements failed:', error)
@@ -82,10 +89,9 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 }
 
 export async function getDiscoveryApps(): Promise<DiscoveryApp[]> {
+  if (MOCK_MODE) return getMockDiscoveryApps()
   try {
-    const data = await fetchGraphQL<CmsDiscoveryAppsData>(
-      DISCOVERY_APPS_QUERY(PREVIEW_MODE),
-    )
+    const data = await fetchGraphQL<CmsDiscoveryAppsData>(DISCOVERY_APPS_QUERY(PREVIEW_MODE))
     return transformDiscoveryApps(data)
   } catch (error) {
     console.error('[cms] getDiscoveryApps failed:', error)
@@ -94,10 +100,9 @@ export async function getDiscoveryApps(): Promise<DiscoveryApp[]> {
 }
 
 export async function getSkillMarkdown(): Promise<CmsSkillMarkdownItem | null> {
+  if (MOCK_MODE) return getMockSkillMarkdown()
   try {
-    const data = await fetchGraphQL<CmsSkillMarkdownData>(
-      SKILL_MARKDOWN_QUERY(PREVIEW_MODE),
-    )
+    const data = await fetchGraphQL<CmsSkillMarkdownData>(SKILL_MARKDOWN_QUERY(PREVIEW_MODE))
     return pickPublishedSkillMarkdown(data)
   } catch (error) {
     console.error('[cms] getSkillMarkdown failed:', error)
