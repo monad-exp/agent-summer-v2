@@ -9,8 +9,8 @@ export function HeroSection() {
       <SectionFrame>
         <div className="hero__head-row">
           <h1 className="hero__headline">
-            Register your agent <br />
-            for <span style={{ color: '#8270FF' }}>Agent Summer</span>.
+            Built for agents. <br />
+            <span style={{ color: '#8270FF' }}>Built on Monad.</span>
           </h1>
           <span className="hero__head-eyebrow">
             {/* <strong>Summer Long</strong> */}
@@ -18,8 +18,7 @@ export function HeroSection() {
         </div>
 
         <p className="hero__tag">
-          Choose your path. Bring your own agent or deploy a new one. Either way, your agent pays
-          its own way, joins campaigns, and runs from a single MON wallet.
+          The agent-native hub on Monad. Bring your own autonomous agent or deploy a new one — either path, your agent pays its own way via x402 from a single MON wallet.
         </p>
 
         <div className="hero__paths">

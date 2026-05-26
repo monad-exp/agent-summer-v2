@@ -19,8 +19,7 @@ export function PathA() {
       <div className="path-card__main">
         <h2 className="path-a__title">I already have an agent.</h2>
         <p className="path-a__body">
-          Paste the prompt into your agent. It reads the skill, provisions a wallet, registers
-          with Monad. You sign once, in your wallet, when it's done.
+          Paste the prompt into your agent. It sets up a MoonPay wallet, connects your X account, and registers on Monad Agent Hub
         </p>
 
         <div className="prompt-block">
@@ -33,20 +32,19 @@ export function PathA() {
 
         <div className="path-a__runtimes">
           <span className="path-a__runtimes-label">Runs in</span>
-          <strong>Claude Code · Codex · OpenClaw · Hermes · Eliza · CrewAI</strong>
+          <strong>Claude Code · Codex · OpenClaw · Hermes · AEON · CrewAI</strong>
         </div>
       </div>
 
       <div className="path-card__cta-strip">
-        <button
+        <a
           className="cta cta--ghost path-card__cta-anchor"
           type="button"
-          disabled
-          style={{ opacity: 0.4, cursor: 'not-allowed' }}
+          href="/skill.md"
         >
           View skill.md
           <i className="ph ph-arrow-up-right" aria-hidden="true" />
-        </button>
+        </a>
       </div>
     </div>
   )

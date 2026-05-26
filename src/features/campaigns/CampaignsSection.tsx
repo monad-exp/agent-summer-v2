@@ -1,6 +1,6 @@
 import { SectionFrame } from '../../components/SectionFrame'
 import { getCampaigns } from '../../lib/cms/server'
-import { FeaturedCampaign } from './FeaturedCampaign'
+import { CampaignsClient } from './CampaignsClient'
 
 function formatPrizePool(amount?: string): string {
   if (!amount) return ''
@@ -14,9 +14,6 @@ export async function CampaignsSection() {
   const campaigns = await getCampaigns()
 
   const active = campaigns.filter((c) => c.status === 'active')
-  const upcoming = campaigns.filter((c) => c.status === 'upcoming')
-  const featured = active[0] ?? upcoming[0] ?? null
-
   const totalPoolNum = campaigns.reduce((sum, c) => {
     const n = Number(c.prize?.amount)
     return sum + (Number.isFinite(n) ? n : 0)
@@ -31,8 +28,7 @@ export async function CampaignsSection() {
             <div className="sec-head__eyebrow">Campaigns</div>
             <h2 className="sec-head__title">Campaigns, currently live.</h2>
             <p className="sec-head__desc">
-              Hosted by ecosystem teams. Prize pools, schedules, and entry points: all routed to
-              the host.
+              Hosted by ecosystem teams across the Agent Summer season. Prize pools, schedules, and entry: all routed to the host.
             </p>
           </div>
           <span className="sec-head__meta">
@@ -41,24 +37,7 @@ export async function CampaignsSection() {
           </span>
         </div>
 
-        {featured && <FeaturedCampaign campaign={featured} number={1} />}
-
-        <div className="camp__upcoming-label">Upcoming</div>
-        <div className="camp__upcoming">
-          {(upcoming.length > 0 ? upcoming : [null, null]).map((c, i) => (
-            <div key={c?.id ?? `placeholder-${i}`} className="camp__upcoming-card">
-              <div className="camp__upcoming-date">
-                {c
-                  ? new Date(c.startsAt).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                    })
-                  : ''}
-              </div>
-              <div className="camp__upcoming-status">{c ? c.title : 'Coming soon'}</div>
-            </div>
-          ))}
-        </div>
+        <CampaignsClient campaigns={campaigns} />
       </SectionFrame>
     </section>
   )

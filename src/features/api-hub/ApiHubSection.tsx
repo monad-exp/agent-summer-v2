@@ -18,7 +18,8 @@ export function ApiHubSection() {
         </div>
 
         <div className="api__ctas">
-          <button className="cta cta--primary" type="button" disabled>
+          <button className="cta cta--primary" type="button" disabled 
+          style={{ opacity: 0.4, cursor: 'not-allowed' }}>
             Explore the API hub (Coming soon)
             <i className="ph ph-arrow-up-right" aria-hidden="true" />
           </button>

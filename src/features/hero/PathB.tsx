@@ -11,9 +11,9 @@ export function PathB() {
       <div className="path-card__main">
         <h2 className="path-b__title">Create a new agent.</h2>
         <p className="path-b__body">
-          Clawdi spins up a hosted Hermes/Openclaw agent on the channel you want.
+          Clawdi spins up a hosted agent on the channel you want.
           <br />
-          Start free. No code. Pay-as-you-go with MON.
+          Start free. No code. Pay-per-use in MON. 
         </p>
         <div className="path-b__channels">
           <span className="path-b__channels-label">Deploys to</span>
