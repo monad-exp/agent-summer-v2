@@ -613,6 +613,11 @@ button { font-family: inherit; cursor: pointer; }
   border: 1px solid var(--rule-strong);
 }
 .cta--ghost:hover { border-color: rgba(255,255,255,0.40); }
+.cta--muted {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
 
 /* Inline Phosphor icons in buttons and link-CTAs */
 .cta .ph,
@@ -711,6 +716,7 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 8px;
   padding: 6px 12px;
   background: var(--live-bg);
@@ -741,6 +747,22 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
   animation: status-pulse 1.8s ease-in-out infinite;
   flex-shrink: 0;
+}
+.status-badge--pending {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-3);
+}
+.status-badge--pending .status-badge__corner--tl,
+.status-badge--pending .status-badge__corner--tr,
+.status-badge--pending .status-badge__corner--bl,
+.status-badge--pending .status-badge__corner--br {
+  border-color: rgba(255, 255, 255, 0.20);
+}
+.status-badge--pending .status-badge__dot {
+  background: var(--text-3);
+  box-shadow: none;
+  animation: none;
 }
 @keyframes status-pulse {
   0%, 100% { opacity: 1; }
@@ -1750,10 +1772,10 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.015);
   padding: 20px 22px 22px;
-  min-height: 100px;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   transition: border-color .18s;
 }
 .camp__upcoming-card:hover {
@@ -1769,9 +1791,12 @@ button { font-family: inherit; cursor: pointer; }
   border-color: var(--purple);
   background: rgba(139, 92, 246, 0.04);
 }
-.camp__upcoming-card--live .camp__upcoming-date {
-  color: var(--green, #4ade80);
+.camp__upcoming-card--disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
 }
+
 
 /* Featured campaign swap animation */
 .camp__featured-wrap {
@@ -1789,6 +1814,24 @@ button { font-family: inherit; cursor: pointer; }
 .camp__featured {
   animation: featuredEnter 0.25s ease-out;
 }
+.camp__upcoming-title {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1.3;
+}
+.camp__upcoming-desc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
 .camp__upcoming-date {
   font-family: var(--mono);
   font-size: var(--t-mono-small);
@@ -1796,6 +1839,7 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: var(--t-mono-track);
   text-transform: uppercase;
   color: var(--text-2);
+  margin-top: auto;
 }
 .camp__upcoming-status {
   font-family: var(--mono);
@@ -1804,7 +1848,6 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: var(--t-mono-track);
   text-transform: uppercase;
   color: var(--text-4);
-  margin-top: auto;
 }
 .camp__num {
   font-family: var(--mono);

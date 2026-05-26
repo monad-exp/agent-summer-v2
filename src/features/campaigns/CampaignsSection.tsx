@@ -13,7 +13,6 @@ function formatPrizePool(amount?: string): string {
 export async function CampaignsSection() {
   const campaigns = await getCampaigns()
 
-  const active = campaigns.filter((c) => c.status === 'active')
   const totalPoolNum = campaigns.reduce((sum, c) => {
     const n = Number(c.prize?.amount)
     return sum + (Number.isFinite(n) ? n : 0)
@@ -32,7 +31,7 @@ export async function CampaignsSection() {
             </p>
           </div>
           <span className="sec-head__meta">
-            <strong>{active.length}</strong>live<span className="sep">·</span>
+            <strong>{campaigns.length}</strong>projects<span className="sep">·</span>
             <strong>{totalPool || '$0'}</strong>pool
           </span>
         </div>

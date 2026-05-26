@@ -19,6 +19,8 @@ export function HeroSection() {
 
         <p className="hero__tag">
           The agent-native hub on Monad. Bring your own autonomous agent or deploy a new one — either path, your agent pays its own way via x402 from a single MON wallet.
+          <br/>
+          <span style={{ color: '#8270FF' }}>AI agents now have a home chain.</span>
         </p>
 
         <div className="hero__paths">

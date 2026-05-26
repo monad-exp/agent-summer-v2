@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { StatusBadge } from '../../components/StatusBadge'
 import type { Campaign } from '../../types/campaign'
 import { FeaturedCampaign } from './FeaturedCampaign'
 
@@ -60,31 +61,39 @@ export function CampaignsClient({ campaigns }: CampaignsClientProps) {
         </div>
       )}
 
-      <div className="camp__upcoming-label">Upcoming</div>
+      <div className="camp__upcoming-label">All Campaigns</div>
       <div className="camp__upcoming">
-        {others.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className={[
-              'camp__upcoming-card',
-              'camp__upcoming-card--clickable',
-              c.status === 'active' ? 'camp__upcoming-card--live' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            onClick={() => handleSelect(c.id)}
-          >
-            <div className="camp__upcoming-date">
-              {c.status === 'active' ? 'Live now' : formatDate(c.startsAt)}
-            </div>
-            <div className="camp__upcoming-status">{c.title}</div>
-          </button>
-        ))}
+        {others.map((c) => {
+          const isLive = c.status === 'active'
+          return isLive ? (
+            <button
+              key={c.id}
+              type="button"
+              className="camp__upcoming-card camp__upcoming-card--clickable"
+              onClick={() => handleSelect(c.id)}
+            >
+              <StatusBadge variant="success" label="Live Now" />
+              <div className="camp__upcoming-title">{c.title}</div>
+              <div className="camp__upcoming-desc">{c.summary}</div>
+              <div className="camp__upcoming-date">{formatDate(c.startsAt)}</div>
+            </button>
+          ) : (
+            <button
+              key={c.id}
+              type="button"
+              className="camp__upcoming-card camp__upcoming-card--clickable"
+              onClick={() => handleSelect(c.id)}
+            >
+              <div className="camp__upcoming-status">Coming Soon</div>
+              <div className="camp__upcoming-title">{c.title}</div>
+              <div className="camp__upcoming-desc">{c.summary}</div>
+              <div className="camp__upcoming-date">{formatDate(c.startsAt)}</div>
+            </button>
+          )
+        })}
         {Array.from({ length: placeholders }, (_, i) => (
           <div key={`ph-${i}`} className="camp__upcoming-card">
-            <div className="camp__upcoming-date" />
-            <div className="camp__upcoming-status">Coming soon</div>
+            <div className="camp__upcoming-status">Coming Soon</div>
           </div>
         ))}
       </div>

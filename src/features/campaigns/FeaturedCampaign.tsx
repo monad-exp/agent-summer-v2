@@ -112,10 +112,16 @@ export function FeaturedCampaign({ campaign, number }: FeaturedCampaignProps) {
               <span>{countdown.m}</span>m
             </span>
           </div>
-          <a className="cta cta--primary" href={campaign.cta.url} target="_blank" rel="noreferrer">
-            {campaign.cta.label}
-            <i className="ph ph-arrow-up-right" aria-hidden="true" />
-          </a>
+          {campaign.status === 'active' ? (
+            <a className="cta cta--primary" href={campaign.cta.url} target="_blank" rel="noreferrer">
+              {campaign.cta.label}
+              <i className="ph ph-arrow-up-right" aria-hidden="true" />
+            </a>
+          ) : (
+            <span className="cta cta--ghost cta--muted" aria-disabled="true">
+              Coming Soon
+            </span>
+          )}
         </div>
       </div>
     </article>
